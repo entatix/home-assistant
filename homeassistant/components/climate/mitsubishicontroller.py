@@ -23,17 +23,17 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     devices_to_add = []
     for i in controller.groups:
         devices_to_add.append(
-            MitsubishiHvacDevice(device=i, unit_of_measurement=TEMP_FAHRENHEIT))
+            MitsubishiHvacDevice(device=i, unit_of_measurements=TEMP_FAHRENHEIT))
     add_devices(devices_to_add)
 
 
 class MitsubishiHvacDevice(ClimateDevice):
-    def __init__(self, device, unit_of_measurement=None, current_fan_mode=None,
+    def __init__(self, device, unit_of_measurements=None, current_fan_mode=None,
                  target_humidity=None):
         self._device = device
         self._name = self._device.number + " : " + self._device.group_name
         self._current_swing_mode = self._device.current_air_direction
-        self._unit_of_measurement = unit_of_measurement
+        self._unit_of_measurement = unit_of_measurements
         self._current_fan_mode = current_fan_mode
 
     def _refresh(self):
