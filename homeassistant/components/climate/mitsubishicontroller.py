@@ -54,6 +54,10 @@ class MitsubishiHvacDevice(ClimateDevice):
         return self._unit_of_measurement
 
     @property
+    def temperature_unit(self):
+        return self._unit_of_measurement
+
+    @property
     def current_temperature(self):
         return self._device.current_temp_f
 
