@@ -446,18 +446,18 @@ class TestComponentHistory(unittest.TestCase):
     def test_unique_states(self):
         """Test retrieving only unique states."""
         self.init_recorder()
-        test_id = 'test_correct.unique_states.light'
         unique_states = []
-        unique_state_attributes = ['foo_state', 'bar_state']
-        unique_ids = ['test_correct.unique_states',
-                      'test_incorrect.unique_states']
-        correct_result = {'test_correct': unique_state_attributes}
 
-        for i in range(2):
-            for id in unique_ids:
-                for state in unique_state_attributes:
-                    self.hass.states.set(id, "State {}".format(i), attributes={'state': state})
+        entity_id = 'test.unique_states'
+
+        for i in range(10):
+            #add duplicate states
+            self.hass.states.set(entity_id, "State {}".format(i))
+            self.hass.states.set(entity_id, "State {}".format(i))
+
             self.wait_recording_done()
+            #add to list of unique states
+            unique_states.append(self.hass.states.get(entity_id))
 
         self.assertEqual(
-            correct_result, history.get_unique_states(test_id))
+            unique_states, history.get_unique_states(entity_id))
