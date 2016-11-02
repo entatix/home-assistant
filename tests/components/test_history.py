@@ -452,8 +452,8 @@ class TestComponentHistory(unittest.TestCase):
 
         for i in range(10):
             #add duplicate states
-            self.hass.states.set(entity_id, "State {}".format(i))
-            self.hass.states.set(entity_id, "State {}".format(i))
+            self.hass.states.set(entity_id, "State {}".format(i), attributes={'state': 'test_state'})
+            self.hass.states.set(entity_id, "State {}".format(i), attributes={'state': 'test_state'})
 
             self.wait_recording_done()
             #add to list of unique states

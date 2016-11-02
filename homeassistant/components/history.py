@@ -321,10 +321,12 @@ def get_unique_states(entity_id):
     entity_id = entity_id.lower()
 
     states = recorder.get_model('States')
-    return recorder.execute(
+    recorder_result = recorder.execute(
         recorder.query('States').filter(
             (states.entity_id == entity_id)
         ).distinct())
+    result = [x['attributes']['state'] for x in recorder_result]
+    return result
 
 class UniqueStatesView(HomeAssistantView):
     """Handle unique states view requests."""
