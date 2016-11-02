@@ -324,3 +324,20 @@ def get_unique_states(entity_id):
         recorder.query('States').filter(
             (states.entity_id == entity_id)
         ).distinct())
+
+class UniqueStatesView(HomeAssistantView):
+    """Handle unique states view requests."""
+
+    url = '/api/history/entity/{entity_id}/unique-states'
+    name = 'api:history:unique-states'
+
+    def __init__(self, hass):
+        """Initilalize the history last 5 states view."""
+        super().__init__(hass)
+
+    @asyncio.coroutine
+    def get(self, request, entity_id):
+        """Retrieve unique states of entity."""
+        result = yield from self.hass.loop.run_in_executor(
+            None, get_unique_states, entity_id)
+        return self.json(result)
