@@ -185,6 +185,7 @@ def setup(hass, config):
         filters.included_domains = include[CONF_DOMAINS]
 
     hass.http.register_view(Last5StatesView(hass))
+    hass.http.register_view(UniqueStatesView(hass))
     hass.http.register_view(HistoryPeriodView(hass, filters))
     register_built_in_panel(hass, 'history', 'History', 'mdi:poll-box')
 
@@ -332,7 +333,7 @@ class UniqueStatesView(HomeAssistantView):
     name = 'api:history:unique-states'
 
     def __init__(self, hass):
-        """Initilalize the history last 5 states view."""
+        """Initilalize the history unique states view."""
         super().__init__(hass)
 
     @asyncio.coroutine
