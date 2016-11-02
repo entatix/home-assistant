@@ -314,3 +314,13 @@ def _is_significant(state):
     # scripts that are not cancellable will never change state
     return (state.domain != 'script' or
             state.attributes.get(script.ATTR_CAN_CANCEL))
+
+def get_unique_states(entity_id):
+    """Return the last 5 states for entity_id."""
+    entity_id = entity_id.lower()
+
+    states = recorder.get_model('States')
+    return recorder.execute(
+        recorder.query('States').filter(
+            (states.entity_id == entity_id)
+        ).distinct())

@@ -442,3 +442,22 @@ class TestComponentHistory(unittest.TestCase):
             set_state(therm, 22, attributes={'current_temperature': 21,
                                              'hidden': True})
         return zero, four, states
+
+    def test_unique_states(self):
+        """Test retrieving only unique states."""
+        self.init_recorder()
+        unique_states = []
+
+        entity_id = 'test.unique_states'
+
+        for i in range(10):
+            #add duplicate states
+            self.hass.states.set(entity_id, "State {}".format(i))
+            self.hass.states.set(entity_id, "State {}".format(i))
+
+            self.wait_recording_done()
+            #add to list of unique states
+            unique_states.append(self.hass.states.get(entity_id))
+
+        self.assertEqual(
+            unique_states, history.get_unique_states(entity_id))
