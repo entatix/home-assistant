@@ -327,7 +327,7 @@ def get_unique_states(entity_id):
         ))
     result = {}
     for i in recorder_result:
-        result[recorder_result.domain] = recorder_result.state
+        result[i.domain] = i.state
     return result
 
 class UniqueStatesView(HomeAssistantView):
