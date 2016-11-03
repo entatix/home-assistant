@@ -324,10 +324,10 @@ def get_unique_states(entity_id):
     recorder_result = recorder.execute(
         recorder.query('States').filter(
             (states.entity_id == entity_id)
-        ).distinct())
-    result = []
+        ))
+    result = {}
     for i in recorder_result:
-        result.append(i.state)
+        result[recorder_result.domain] = recorder_result.state
     return result
 
 class UniqueStatesView(HomeAssistantView):
