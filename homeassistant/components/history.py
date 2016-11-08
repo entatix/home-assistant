@@ -321,7 +321,8 @@ def get_unique_states(entity_id):
     """Return the last 5 states for entity_id."""
     api = remote.API('localhost', 'qwerty')
     entity_id = entity_id.lower()
-    entity_domain = entity_id.split('.')[0]
+    entity_state = remote.get_state(api, entity_id)
+    entity_domain = entity_state.domain
     states = recorder.get_model('States')
     recorder_result = recorder.execute(
         recorder.query('States').filter(
