@@ -17,6 +17,7 @@ from homeassistant.components import recorder, script
 from homeassistant.components.frontend import register_built_in_panel
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.const import ATTR_HIDDEN
+import homeassistant.remote as remote
 
 DOMAIN = 'history'
 DEPENDENCIES = ['recorder', 'http']
@@ -318,16 +319,20 @@ def _is_significant(state):
 
 def get_unique_states(entity_id):
     """Return the last 5 states for entity_id."""
+    api = remote.API('localhost', 'qwerty')
     entity_id = entity_id.lower()
-
+    entity_domain = entity_id.split('.')[0]
     states = recorder.get_model('States')
     recorder_result = recorder.execute(
         recorder.query('States').filter(
-            (states.entity_id == entity_id)
+            (states.domain == entity_domain)
         ))
     result = {}
     for i in recorder_result:
-        result[i.domain] = i.state
+        if i.domain in result:
+            result[i.domain] += i.state
+        else:
+            result[i.domain] = [i.state]
     return result
 
 class UniqueStatesView(HomeAssistantView):
