@@ -319,7 +319,7 @@ def _is_significant(state):
 
 def get_unique_states(entity_id):
     """Return the last 5 states for entity_id."""
-    api = remote.API(host='home.gelb.fish', api_password='qwerty')
+    api = remote.API(host='localhost', api_password='qwerty')
     print(remote.validate_api(api))
     entity_id = 'test_correct.unique_states.light'
     entity_state = remote.get_state(api, entity_id)
