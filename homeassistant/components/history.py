@@ -17,6 +17,7 @@ from homeassistant.components import recorder, script
 from homeassistant.components.frontend import register_built_in_panel
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.const import ATTR_HIDDEN
+import homeassistant.remote as remote
 
 DOMAIN = 'history'
 DEPENDENCIES = ['recorder', 'http']
@@ -185,6 +186,7 @@ def setup(hass, config):
         filters.included_domains = include[CONF_DOMAINS]
 
     hass.http.register_view(Last5StatesView(hass))
+    hass.http.register_view(UniqueStatesView(hass))
     hass.http.register_view(HistoryPeriodView(hass, filters))
     register_built_in_panel(hass, 'history', 'History', 'mdi:poll-box')
 
@@ -317,13 +319,23 @@ def _is_significant(state):
 
 def get_unique_states(entity_id):
     """Return the last 5 states for entity_id."""
-    entity_id = entity_id.lower()
-
+    api = remote.API(host='localhost', api_password='qwerty')
+    entity_id = 'test_correct.unique_states.light'
+    entity_state = remote.get_state(api, entity_id)
+    remote.validate_api(api)
+    entity_domain = entity_state.domain
     states = recorder.get_model('States')
-    return recorder.execute(
+    recorder_result = recorder.execute(
         recorder.query('States').filter(
-            (states.entity_id == entity_id)
-        ).distinct())
+            (states.domain == entity_domain)
+        ))
+    result = {}
+    for i in recorder_result:
+        if i.domain in result:
+            result[i.domain] += i.state
+        else:
+            result[i.domain] = [i.state]
+    return result
 
 class UniqueStatesView(HomeAssistantView):
     """Handle unique states view requests."""
@@ -332,7 +344,7 @@ class UniqueStatesView(HomeAssistantView):
     name = 'api:history:unique-states'
 
     def __init__(self, hass):
-        """Initilalize the history last 5 states view."""
+        """Initilalize the history unique states view."""
         super().__init__(hass)
 
     @asyncio.coroutine
