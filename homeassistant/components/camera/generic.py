@@ -43,7 +43,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 # pylint: disable=unused-argument
 def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     """Setup a generic IP Camera."""
-    hass.loop.create_task(async_add_devices([GenericCamera(hass, config)]))
+    yield from async_add_devices([GenericCamera(hass, config)])
 
 
 class GenericCamera(Camera):
@@ -114,7 +114,7 @@ class GenericCamera(Camera):
                         auth=self._auth
                     )
                     self._last_image = yield from respone.read()
-                    self.hass.loop.create_task(respone.release())
+                    yield from respone.release()
             except asyncio.TimeoutError:
                 _LOGGER.error('Timeout getting camera image')
                 return self._last_image

@@ -36,8 +36,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     minimum = config.get(CONF_MINIMUM)
     maximum = config.get(CONF_MAXIMUM)
 
-    hass.loop.create_task(async_add_devices(
-        [RandomSensor(name, minimum, maximum)], True))
+    yield from async_add_devices([RandomSensor(name, minimum, maximum)], True)
     return True
 
 
@@ -70,4 +69,4 @@ class RandomSensor(Entity):
     def async_update(self):
         """Get a new number and updates the states."""
         from random import randrange
-        self._state = randrange(self._minimum, self._maximum)
+        self._state = randrange(self._minimum, self._maximum + 1)

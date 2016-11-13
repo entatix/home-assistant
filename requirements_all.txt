@@ -24,9 +24,6 @@ PyMata==2.13
 # homeassistant.components.rpi_gpio
 # RPi.GPIO==0.6.1
 
-# homeassistant.components.media_player.sonos
-SoCo==0.12
-
 # homeassistant.components.notify.twitter
 TwitterAPI==2.4.2
 
@@ -40,7 +37,7 @@ apcaccess==0.0.4
 apns2==0.1.1
 
 # homeassistant.components.sun
-astral==1.2
+astral==1.3
 
 # homeassistant.components.sensor.linux_battery
 batinfo==0.3
@@ -76,10 +73,13 @@ concord232==0.14
 directpy==0.1
 
 # homeassistant.components.updater
-distro==1.0.0
+distro==1.0.1
 
 # homeassistant.components.notify.xmpp
 dnspython3==1.15.0
+
+# homeassistant.components.sensor.dovado
+dovado==0.1.15
 
 # homeassistant.components.dweet
 # homeassistant.components.sensor.dweet
@@ -113,7 +113,7 @@ fixerio==0.1.1
 freesms==0.1.0
 
 # homeassistant.components.conversation
-fuzzywuzzy==0.12.0
+fuzzywuzzy==0.14.0
 
 # homeassistant.components.device_tracker.bluetooth_le_tracker
 # gattlib==0.20150805
@@ -132,6 +132,9 @@ ha-alpr==0.3
 
 # homeassistant.components.ffmpeg
 ha-ffmpeg==0.15
+
+# homeassistant.components.media_player.philips_js
+ha-philipsjs==0.0.1
 
 # homeassistant.components.mqtt.server
 hbmqtt==0.7.1
@@ -154,6 +157,9 @@ https://github.com/GadgetReactor/pyHS100/archive/1f771b7d8090a91c6a58931532e4273
 # homeassistant.components.switch.dlink
 https://github.com/LinuxChristian/pyW215/archive/v0.3.5.zip#pyW215==0.3.5
 
+# homeassistant.components.media_player.sonos
+https://github.com/SoCo/SoCo/archive/cf8c2701165562eccbf1ecc879bf7060ceb0993e.zip#SoCo==0.12
+
 # homeassistant.components.media_player.webostv
 # homeassistant.components.notify.webostv
 https://github.com/TheRealLink/pylgtv/archive/v0.1.2.zip#pylgtv==0.1.2
@@ -166,7 +172,7 @@ https://github.com/TheRealLink/pythinkingcleaner/archive/v0.0.2.zip#pythinkingcl
 https://github.com/Xorso/pyalarmdotcom/archive/0.1.1.zip#pyalarmdotcom==0.1.1
 
 # homeassistant.components.media_player.braviatv
-https://github.com/aparraga/braviarc/archive/0.3.5.zip#braviarc==0.3.5
+https://github.com/aparraga/braviarc/archive/0.3.6.zip#braviarc==0.3.6
 
 # homeassistant.components.media_player.roku
 https://github.com/bah2830/python-roku/archive/3.1.2.zip#roku==3.1.2
@@ -272,7 +278,7 @@ mficlient==0.3.0
 miflora==0.1.9
 
 # homeassistant.components.discovery
-netdisco==0.7.5
+netdisco==0.7.6
 
 # homeassistant.components.sensor.neurio_energy
 neurio==0.2.10
@@ -309,7 +315,7 @@ pmsensor==0.3
 proliphix==0.4.0
 
 # homeassistant.components.sensor.systemmonitor
-psutil==4.4.2
+psutil==5.0.0
 
 # homeassistant.components.wink
 pubnub==3.8.2
@@ -345,6 +351,9 @@ pychromecast==0.7.6
 # homeassistant.components.media_player.cmus
 pycmus==0.1.0
 
+# homeassistant.components.sensor.cups
+# pycups==1.9.73
+
 # homeassistant.components.envisalink
 # homeassistant.components.zwave
 pydispatcher==2.0.5
@@ -366,6 +375,9 @@ pyicloud==0.9.1
 
 # homeassistant.components.sensor.lastfm
 pylast==1.6.0
+
+# homeassistant.components.litejet
+pylitejet==0.1
 
 # homeassistant.components.sensor.loopenergy
 pyloopenergy==0.0.15
@@ -395,7 +407,7 @@ pyserial==3.1.1
 pysnmp==4.3.2
 
 # homeassistant.components.digital_ocean
-python-digitalocean==1.10.0
+python-digitalocean==1.10.1
 
 # homeassistant.components.sensor.darksky
 python-forecastio==1.3.5
@@ -421,6 +433,9 @@ python-nmap==0.6.1
 # homeassistant.components.notify.pushover
 python-pushover==0.2
 
+# homeassistant.components.sensor.synologydsm
+python-synology==0.1.0
+
 # homeassistant.components.notify.telegram
 python-telegram-bot==5.2.0
 
@@ -428,7 +443,7 @@ python-telegram-bot==5.2.0
 python-twitch==1.3.0
 
 # homeassistant.components.wink
-python-wink==0.9.0
+python-wink==0.10.0
 
 # homeassistant.components.keyboard
 # pyuserinput==0.1.11
@@ -449,7 +464,7 @@ radiotherm==1.2
 # rpi-rf==0.9.5
 
 # homeassistant.components.media_player.yamaha
-rxv==0.2.0
+rxv==0.3.0
 
 # homeassistant.components.media_player.samsungtv
 samsungctl==0.5.1
@@ -483,7 +498,7 @@ speedtest-cli==0.3.4
 
 # homeassistant.components.recorder
 # homeassistant.scripts.db_migrator
-sqlalchemy==1.1.2
+sqlalchemy==1.1.3
 
 # homeassistant.components.statsd
 statsd==3.2.1
@@ -522,6 +537,9 @@ urllib3
 
 # homeassistant.components.camera.uvc
 uvcclient==0.9.0
+
+# homeassistant.components.device_tracker.volvooncall
+volvooncall==0.1.1
 
 # homeassistant.components.verisure
 vsure==0.11.1

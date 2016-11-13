@@ -15,7 +15,7 @@ import async_timeout
 
 from homeassistant.const import (
     CONF_NAME, CONF_USERNAME, CONF_PASSWORD,
-    CONF_URL, CONF_WHITELIST)
+    CONF_URL, CONF_WHITELIST, CONF_VERIFY_SSL)
 from homeassistant.components.camera import (
     Camera, PLATFORM_SCHEMA)
 import homeassistant.helpers.config_validation as cv
@@ -28,7 +28,6 @@ DEFAULT_STREAM_ID = '0'
 TIMEOUT = 5
 CONF_CAMERA_NAME = 'camera_name'
 CONF_STREAM_ID = 'stream_id'
-CONF_VALID_CERT = 'valid_cert'
 
 QUERY_CGI = 'query.cgi'
 QUERY_API = 'SYNO.API.Info'
@@ -51,13 +50,17 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_PASSWORD): cv.string,
     vol.Required(CONF_URL): cv.string,
     vol.Optional(CONF_WHITELIST, default=[]): cv.ensure_list,
-    vol.Optional(CONF_VALID_CERT, default=True): cv.boolean,
+    vol.Optional(CONF_VERIFY_SSL, default=True): cv.boolean,
 })
 
 
 @asyncio.coroutine
 def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     """Setup a Synology IP Camera."""
+    if not config.get(CONF_VERIFY_SSL):
+        _LOGGER.warning('SSL verification currently cannot be disabled. '
+                        'See https://goo.gl/1h1119')
+
     # Determine API to use for authentication
     syno_api_url = SYNO_API_URL.format(
         config.get(CONF_URL), WEBAPI_PATH, QUERY_CGI)
@@ -73,7 +76,6 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
             query_req = yield from hass.websession.get(
                 syno_api_url,
                 params=query_payload,
-                verify=config.get(CONF_VALID_CERT)
             )
     except asyncio.TimeoutError:
         _LOGGER.error("Timeout on %s", syno_api_url)
@@ -97,7 +99,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
         config.get(CONF_USERNAME),
         config.get(CONF_PASSWORD),
         syno_auth_url,
-        config.get(CONF_VALID_CERT)
+        config.get(CONF_VERIFY_SSL)
     )
 
     # Use SessionID to get cameras in system
@@ -114,7 +116,6 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
             camera_req = yield from hass.websession.get(
                 syno_camera_url,
                 params=camera_payload,
-                verify_ssl=config.get(CONF_VALID_CERT),
                 cookies={'id': session_id}
             )
     except asyncio.TimeoutError:
@@ -145,8 +146,8 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
             tasks.append(device.async_read_sid())
             devices.append(device)
 
-    yield from asyncio.gather(*tasks, loop=hass.loop)
-    hass.loop.create_task(async_add_devices(devices))
+    yield from asyncio.wait(tasks, loop=hass.loop)
+    yield from async_add_devices(devices)
 
 
 @asyncio.coroutine
@@ -166,7 +167,6 @@ def get_session_id(hass, username, password, login_url, valid_cert):
             auth_req = yield from hass.websession.get(
                 login_url,
                 params=auth_payload,
-                verify_ssl=valid_cert
             )
     except asyncio.TimeoutError:
         _LOGGER.error("Timeout on %s", login_url)
@@ -193,7 +193,7 @@ class SynologyCamera(Camera):
         self._login_url = config.get(CONF_URL) + '/webapi/' + 'auth.cgi'
         self._camera_name = config.get(CONF_CAMERA_NAME)
         self._stream_id = config.get(CONF_STREAM_ID)
-        self._valid_cert = config.get(CONF_VALID_CERT)
+        self._valid_cert = config.get(CONF_VERIFY_SSL)
         self._camera_id = camera_id
         self._snapshot_path = snapshot_path
         self._streaming_path = streaming_path
@@ -234,7 +234,6 @@ class SynologyCamera(Camera):
                 response = yield from self.hass.websession.get(
                     image_url,
                     params=image_payload,
-                    verify_ssl=self._valid_cert,
                     cookies={'id': self._session_id}
                 )
         except asyncio.TimeoutError:
@@ -264,7 +263,6 @@ class SynologyCamera(Camera):
                 stream = yield from self.hass.websession.get(
                     streaming_url,
                     payload=streaming_payload,
-                    verify_ssl=self._valid_cert,
                     cookies={'id': self._session_id}
                 )
         except asyncio.TimeoutError:
@@ -272,7 +270,6 @@ class SynologyCamera(Camera):
 
         response = web.StreamResponse()
         response.content_type = stream.headers.get(CONTENT_TYPE_HEADER)
-        response.enable_chunked_encoding()
 
         yield from response.prepare(request)
 
@@ -283,8 +280,8 @@ class SynologyCamera(Camera):
                     break
                 response.write(data)
         finally:
-            self.hass.loop.create_task(stream.release())
-            self.hass.loop.create_task(response.write_eof())
+            self.hass.async_add_job(stream.release())
+            yield from response.write_eof()
 
     @property
     def name(self):

@@ -37,6 +37,9 @@ omit =
     homeassistant/components/isy994.py
     homeassistant/components/*/isy994.py
 
+    homeassistant/components/litejet.py
+    homeassistant/components/*/litejet.py
+
     homeassistant/components/modbus.py
     homeassistant/components/*/modbus.py
 
@@ -129,6 +132,7 @@ omit =
     homeassistant/components/climate/knx.py
     homeassistant/components/climate/proliphix.py
     homeassistant/components/climate/radiotherm.py
+    homeassistant/components/cover/garadget.py    
     homeassistant/components/cover/homematic.py
     homeassistant/components/cover/rpi_gpio.py
     homeassistant/components/cover/scsgate.py
@@ -146,6 +150,7 @@ omit =
     homeassistant/components/device_tracker/netgear.py
     homeassistant/components/device_tracker/nmap_tracker.py
     homeassistant/components/device_tracker/snmp.py
+    homeassistant/components/device_tracker/swisscom.py
     homeassistant/components/device_tracker/thomson.py
     homeassistant/components/device_tracker/tomato.py
     homeassistant/components/device_tracker/tplink.py
@@ -188,6 +193,7 @@ omit =
     homeassistant/components/media_player/onkyo.py
     homeassistant/components/media_player/panasonic_viera.py
     homeassistant/components/media_player/pandora.py
+    homeassistant/components/media_player/philips_js.py
     homeassistant/components/media_player/pioneer.py
     homeassistant/components/media_player/plex.py
     homeassistant/components/media_player/roku.py
@@ -235,10 +241,12 @@ omit =
     homeassistant/components/sensor/bom.py
     homeassistant/components/sensor/coinmarketcap.py
     homeassistant/components/sensor/cpuspeed.py
+    homeassistant/components/sensor/cups.py
     homeassistant/components/sensor/currencylayer.py
     homeassistant/components/sensor/darksky.py
     homeassistant/components/sensor/deutsche_bahn.py
     homeassistant/components/sensor/dht.py
+    homeassistant/components/sensor/dovado.py
     homeassistant/components/sensor/dte_energy_bridge.py
     homeassistant/components/sensor/efergy.py
     homeassistant/components/sensor/eliqonline.py
@@ -280,6 +288,7 @@ omit =
     homeassistant/components/sensor/supervisord.py
     homeassistant/components/sensor/swiss_hydrological_data.py
     homeassistant/components/sensor/swiss_public_transport.py
+    homeassistant/components/sensor/synologydsm.py
     homeassistant/components/sensor/systemmonitor.py
     homeassistant/components/sensor/ted5000.py
     homeassistant/components/sensor/temper.py

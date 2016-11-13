@@ -17,6 +17,7 @@ from homeassistant.components import recorder, script
 from homeassistant.components.frontend import register_built_in_panel
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.const import ATTR_HIDDEN
+import homeassistant.remote as remote
 
 DOMAIN = 'history'
 DEPENDENCIES = ['recorder', 'http']
@@ -185,6 +186,7 @@ def setup(hass, config):
         filters.included_domains = include[CONF_DOMAINS]
 
     hass.http.register_view(Last5StatesView(hass))
+    hass.http.register_view(UniqueStatesView(hass))
     hass.http.register_view(HistoryPeriodView(hass, filters))
     register_built_in_panel(hass, 'history', 'History', 'mdi:poll-box')
 
@@ -314,3 +316,40 @@ def _is_significant(state):
     # scripts that are not cancellable will never change state
     return (state.domain != 'script' or
             state.attributes.get(script.ATTR_CAN_CANCEL))
+
+def get_unique_states(entity_id):
+    """Return the last 5 states for entity_id."""
+    api = remote.API(host='localhost', api_password='qwerty')
+    entity_id = 'test_correct.unique_states.light'
+    entity_state = remote.get_state(api, entity_id)
+    remote.validate_api(api)
+    entity_domain = entity_state.domain
+    states = recorder.get_model('States')
+    recorder_result = recorder.execute(
+        recorder.query('States').filter(
+            (states.domain == entity_domain)
+        ))
+    result = {}
+    for i in recorder_result:
+        if i.domain in result:
+            result[i.domain] += i.state
+        else:
+            result[i.domain] = [i.state]
+    return result
+
+class UniqueStatesView(HomeAssistantView):
+    """Handle unique states view requests."""
+
+    url = '/api/history/entity/{entity_id}/unique-states'
+    name = 'api:history:unique-states'
+
+    def __init__(self, hass):
+        """Initilalize the history unique states view."""
+        super().__init__(hass)
+
+    @asyncio.coroutine
+    def get(self, request, entity_id):
+        """Retrieve unique states of entity."""
+        result = yield from self.hass.loop.run_in_executor(
+            None, get_unique_states, entity_id)
+        return self.json(result)
