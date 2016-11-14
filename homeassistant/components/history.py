@@ -17,8 +17,7 @@ from homeassistant.components import recorder, script
 from homeassistant.components.frontend import register_built_in_panel
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.const import ATTR_HIDDEN
-import async_timeout
-import homeassistant as ha
+from homeassistant import core as ha
 import requests
 
 DOMAIN = 'history'
