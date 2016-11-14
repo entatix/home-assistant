@@ -19,6 +19,7 @@ from homeassistant.components.http import HomeAssistantView
 from homeassistant.const import ATTR_HIDDEN
 import async_timeout
 import homeassistant as ha
+import requests
 
 DOMAIN = 'history'
 DEPENDENCIES = ['recorder', 'http']
@@ -319,18 +320,14 @@ def _is_significant(state):
             state.attributes.get(script.ATTR_CAN_CANCEL))
 
 
-def get_unique_states(entity_id, api_url='states', api_password=''):
+def get_unique_states(entity_id, api_url='state', api_password=''):
     """Return the last 5 states for entity_id."""
-    @asyncio.coroutine
-    def fetch(session, url):
-        with async_timeout.timeout(10):
-            with session.get(url, headers={'X-HA-access': api_password}) as response:
-                yield from response.text()
 
     @asyncio.coroutine
     def main(loop):
          with aiohttp.ClientSession(loop=loop) as session:
-            html = yield from fetch(session, 'localhost:8123/api/{}'.format(api_url))
+            html = loop.run_in_executor(None, requests.get, 'localhost:8321/api/{}/{}'.format(api_url, entity_id),
+                                        headers={'X-HA-access': api_password})
             entity_state = ha.State.from_dict(html.json())
             entity_domain = entity_state.domain
             states = recorder.get_model('States')
