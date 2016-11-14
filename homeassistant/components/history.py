@@ -321,14 +321,16 @@ def _is_significant(state):
 
 def get_unique_states(entity_id, api_url='states', api_password=''):
     """Return the last 5 states for entity_id."""
-    async def fetch(session, url):
+    @asyncio.coroutine
+    def fetch(session, url):
         with async_timeout.timeout(10):
-            async with session.get(url, headers={'X-HA-access': api_password}) as response:
-                return await response.text()
+            with session.get(url, headers={'X-HA-access': api_password}) as response:
+                yield from response.text()
 
-    async def main(loop):
-        async with aiohttp.ClientSession(loop=loop) as session:
-            html = await fetch(session, 'localhost:8123/api/{}'.format(api_url))
+    @asyncio.coroutine
+    def main(loop):
+         with aiohttp.ClientSession(loop=loop) as session:
+            html = yield from fetch(session, 'localhost:8123/api/{}'.format(api_url))
             entity_state = ha.State.from_dict(html.json())
             entity_domain = entity_state.domain
             states = recorder.get_model('States')
