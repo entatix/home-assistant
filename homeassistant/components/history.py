@@ -347,7 +347,7 @@ def get_unique_states(entity_id, api_url='states', api_password=''):
 
     loop = asyncio.get_event_loop()
     result = yield from loop.run_until_complete(main(loop))
-    return result
+    return list(result)
 
 class UniqueStatesView(HomeAssistantView):
     """Handle unique states view requests."""
