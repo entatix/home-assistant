@@ -67,7 +67,6 @@ class MitsubishiHvacDevice(ClimateDevice):
 
     @property
     def current_operation(self):
-        self._device.refresh()
         return self._device.current_operation
 
     @property
@@ -106,3 +105,6 @@ class MitsubishiHvacDevice(ClimateDevice):
     @property
     def swing_list(self):
         return self._device.air_direction_options
+
+    def update(self):
+        self._device.refresh()
