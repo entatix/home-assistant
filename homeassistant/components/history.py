@@ -9,7 +9,7 @@ from collections import defaultdict
 from datetime import timedelta
 from itertools import groupby
 import voluptuous as vol
-
+import aiohttp
 from homeassistant.const import HTTP_BAD_REQUEST
 import homeassistant.helpers.config_validation as cv
 import homeassistant.util.dt as dt_util
@@ -17,7 +17,8 @@ from homeassistant.components import recorder, script
 from homeassistant.components.frontend import register_built_in_panel
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.const import ATTR_HIDDEN
-import homeassistant.remote as remote
+import async_timeout
+import homeassistant as ha
 
 DOMAIN = 'history'
 DEPENDENCIES = ['recorder', 'http']
@@ -317,24 +318,33 @@ def _is_significant(state):
     return (state.domain != 'script' or
             state.attributes.get(script.ATTR_CAN_CANCEL))
 
-def get_unique_states(entity_id):
+
+def get_unique_states(entity_id, api_url='states', api_password=''):
     """Return the last 5 states for entity_id."""
-    api = remote.API(host='localhost', api_password='qwerty')
-    entity_id = 'test_correct.unique_states.light'
-    entity_state = remote.get_state(api, entity_id)
-    remote.validate_api(api)
-    entity_domain = entity_state.domain
-    states = recorder.get_model('States')
-    recorder_result = recorder.execute(
-        recorder.query('States').filter(
-            (states.domain == entity_domain)
-        ))
-    result = {}
-    for i in recorder_result:
-        if i.domain in result:
-            result[i.domain] += i.state
-        else:
-            result[i.domain] = [i.state]
+    async def fetch(session, url):
+        with async_timeout.timeout(10):
+            async with session.get(url, headers={'X-HA-access': api_password}) as response:
+                return await response.text()
+
+    async def main(loop):
+        async with aiohttp.ClientSession(loop=loop) as session:
+            html = await fetch(session, 'localhost:8123/api/{}'.format(api_url))
+            entity_state = ha.State.from_dict(html.json())
+            entity_domain = entity_state.domain
+            states = recorder.get_model('States')
+            recorder_result = recorder.execute(
+                recorder.query('States').filter(
+                    (states.domain == entity_domain)
+                ))
+            result = {}
+            for i in recorder_result:
+                if i.domain in result:
+                    result[i.domain] += i.state
+                else:
+                    result[i.domain] = [i.state]
+
+    loop = asyncio.get_event_loop()
+    result = yield from loop.run_until_complete(main(loop))
     return result
 
 class UniqueStatesView(HomeAssistantView):
