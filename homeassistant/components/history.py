@@ -321,30 +321,21 @@ def _is_significant(state):
 
 def get_unique_states(entity_id, api_url='state', api_password=''):
     """Return the last 5 states for entity_id."""
-
-    def request_wrapper():
-        requests.get('http://home.gelb.fish:8123/api/{}/{}'.format(api_url, entity_id),
-        headers={'X-HA-access': api_password})
-
-    @asyncio.coroutine
-    def main(loop):
-            html = request_wrapper()
-            entity_state = ha.State.from_dict(dict(html.json()))
-            entity_domain = entity_state.domain
-            states = recorder.get_model('States')
-            recorder_result = recorder.execute(
-                recorder.query('States').filter(
-                    (states.domain == entity_domain)
-                ))
-            result = {}
-            for i in recorder_result:
-                if i.domain in result:
-                    result[i.domain] += i.state
-                else:
-                    result[i.domain] = [i.state]
-
-    loop = asyncio.get_event_loop()
-    result = yield from loop.run_until_complete(main(loop))
+    html = requests.get('http://home.gelb.fish:8123/api/{}/{}'.format(api_url, entity_id),
+    headers={'X-HA-access': api_password})
+    entity_state = ha.State.from_dict(dict(html.json()))
+    entity_domain = entity_state.domain
+    states = recorder.get_model('States')
+    recorder_result = recorder.execute(
+        recorder.query('States').filter(
+            (states.domain == entity_domain)
+        ))
+    result = {}
+    for i in recorder_result:
+        if i.domain in result:
+            result[i.domain] += i.state
+        else:
+            result[i.domain] = [i.state]
     return list(result)
 
 class UniqueStatesView(HomeAssistantView):
