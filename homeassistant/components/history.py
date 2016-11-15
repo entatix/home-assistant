@@ -323,7 +323,7 @@ def get_unique_states(entity_id, api_url='state', api_password=''):
     """Return the last 5 states for entity_id."""
 
     def request_wrapper():
-        requests.get('localhost:8321/api/{}/{}'.format(api_url, entity_id),
+        requests.get('http://home.gelb.fish:8123/api/{}/{}'.format(api_url, entity_id),
         headers={'X-HA-access': api_password})
 
     @asyncio.coroutine
