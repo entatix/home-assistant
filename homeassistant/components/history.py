@@ -328,8 +328,7 @@ def get_unique_states(entity_id, api_url='state', api_password=''):
 
     @asyncio.coroutine
     def main(loop):
-         with aiohttp.ClientSession(loop=loop) as session:
-            html = yield from loop.run_in_executor(None, request_wrapper)
+            html = request_wrapper()
             entity_state = ha.State.from_dict(dict(html.json()))
             entity_domain = entity_state.domain
             states = recorder.get_model('States')
