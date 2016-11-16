@@ -330,11 +330,11 @@ class UniqueStatesView(HomeAssistantView):
         """Initilalize the history unique states view."""
         super().__init__(hass)
 
-    def get_unique_states(self, entity_id, api_url='state', api_password=''):
+    def get_unique_states(self, entity_id=None, api_url='state', api_password=''):
         """Return the last 5 states for entity_id."""
         html = requests.get('http://home.gelb.fish:8123/api/{}/{}'.format(api_url, entity_id),
                             headers={'X-HA-access': api_password})
-        entity_state = hass.states.get(entity_id)
+        entity_state = self.hass.states.get(entity_id)
         entity_domain = entity_state.domain
         states = recorder.get_model('States')
         recorder_result = recorder.execute(
@@ -353,5 +353,5 @@ class UniqueStatesView(HomeAssistantView):
     def get(self, request, entity_id):
         """Retrieve unique states of entity."""
         result = yield from self.hass.loop.run_in_executor(
-            None, get_unique_states, entity_id)
+            None, self.get_unique_states, entity_id)
         return self.json(result)
