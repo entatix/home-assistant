@@ -321,13 +321,20 @@ def get_unique_states(hass, entity_id=None, api_url='state', api_password=''):
     """Return the last 5 states for entity_id."""
     html = requests.get('http://home.gelb.fish:8123/api/{}/{}'.format(api_url, entity_id),
                         headers={'X-HA-access': api_password})
-    entity_state = hass.states.get(entity_id)
-    entity_domain = entity_state.domain
-    states = recorder.get_model('States')
-    recorder_result = recorder.execute(
-        recorder.query('States').filter(
-            (states.domain == entity_domain)
-        ))
+
+    if entity_id is not None:
+        entity_state = hass.states.get(entity_id)
+        entity_domain = entity_state.domain
+        states = recorder.get_model('States')
+        recorder_result = recorder.execute(
+            recorder.query('States').filter(
+                (states.domain == entity_domain)
+            ))
+    else:
+        states = recorder.get_model('States')
+        recorder_result = recorder.execute(
+            recorder.query('States'))
+
     result = {}
     for i in recorder_result:
         if i.domain in result:
