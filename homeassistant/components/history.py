@@ -17,7 +17,7 @@ from homeassistant.components import recorder, script
 from homeassistant.components.frontend import register_built_in_panel
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.const import ATTR_HIDDEN
-from homeassistant import core as ha
+from homeassistant import hass
 import requests
 
 DOMAIN = 'history'
@@ -319,24 +319,7 @@ def _is_significant(state):
             state.attributes.get(script.ATTR_CAN_CANCEL))
 
 
-def get_unique_states(entity_id, api_url='state', api_password=''):
-    """Return the last 5 states for entity_id."""
-    html = requests.get('http://home.gelb.fish:8123/api/{}/{}'.format(api_url, entity_id),
-    headers={'X-HA-access': api_password})
-    entity_state = ha.State(entity_id)
-    entity_domain = entity_state.domain
-    states = recorder.get_model('States')
-    recorder_result = recorder.execute(
-        recorder.query('States').filter(
-            (states.domain == entity_domain)
-        ))
-    result = {}
-    for i in recorder_result:
-        if i.domain in result:
-            result[i.domain] += i.state
-        else:
-            result[i.domain] = [i.state]
-    return list(result)
+
 
 class UniqueStatesView(HomeAssistantView):
     """Handle unique states view requests."""
@@ -347,6 +330,25 @@ class UniqueStatesView(HomeAssistantView):
     def __init__(self, hass):
         """Initilalize the history unique states view."""
         super().__init__(hass)
+
+    def get_unique_states(self, entity_id, api_url='state', api_password=''):
+        """Return the last 5 states for entity_id."""
+        html = requests.get('http://home.gelb.fish:8123/api/{}/{}'.format(api_url, entity_id),
+                            headers={'X-HA-access': api_password})
+        entity_state = hass.states.get(entity_id)
+        entity_domain = entity_state.domain
+        states = recorder.get_model('States')
+        recorder_result = recorder.execute(
+            recorder.query('States').filter(
+                (states.domain == entity_domain)
+            ))
+        result = {}
+        for i in recorder_result:
+            if i.domain in result:
+                result[i.domain] += i.state
+            else:
+                result[i.domain] = [i.state]
+        return list(result)
 
     @asyncio.coroutine
     def get(self, request, entity_id):
