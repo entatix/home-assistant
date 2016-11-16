@@ -322,18 +322,15 @@ def get_unique_states(hass, entity_id=None, api_url='state', api_password=''):
     html = requests.get('http://home.gelb.fish:8123/api/{}/{}'.format(api_url, entity_id),
                         headers={'X-HA-access': api_password})
 
+    recorder_result = recorder.execute(
+        recorder.query('States'))
     if entity_id is not None:
         entity_state = hass.states.get(entity_id)
         entity_domain = entity_state.domain
         states = recorder.get_model('States')
-        recorder_result = recorder.execute(
-            recorder.query('States').filter(
+        recorder_result.filter(
                 (states.domain == entity_domain)
-            ))
-    else:
-        states = recorder.get_model('States')
-        recorder_result = recorder.execute(
-            recorder.query('States'))
+            )
 
     result = {}
     for i in recorder_result:
@@ -341,7 +338,7 @@ def get_unique_states(hass, entity_id=None, api_url='state', api_password=''):
             result[i.domain] += i.state
         else:
             result[i.domain] = [i.state]
-    return result
+    return recorder_result
 
 
 
