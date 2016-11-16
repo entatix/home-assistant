@@ -464,5 +464,5 @@ class TestComponentHistory(unittest.TestCase):
                                                      api_url='states',
                                                      api_password='qwerty')))
         self.assertEqual(
-            unique_states, list(history.get_unique_states(entity_id=None, api_url='states',
+            unique_states, list(history.UniqueStatesView.get_unique_states(entity_id=None, api_url='states',
                                                      api_password='qwerty')))
