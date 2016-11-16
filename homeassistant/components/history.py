@@ -348,6 +348,7 @@ class UniqueStatesView(HomeAssistantView):
     def __init__(self, hass):
         """Initilalize the history unique states view."""
         super().__init__(hass)
+        self.hass = hass
 
     def wrapper_func(self, entity_id):
         get_unique_states(self.hass, entity_id=entity_id)
