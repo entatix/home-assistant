@@ -338,7 +338,7 @@ def get_unique_states(hass, entity_id=None, api_url='state', api_password=''):
             result[i.domain] += i.state
         else:
             result[i.domain] = [i.state]
-    return recorder_result
+    return result
 
 
 
