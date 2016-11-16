@@ -460,12 +460,12 @@ class TestComponentHistory(unittest.TestCase):
             self.wait_recording_done()
 
         self.assertEqual(
-            unique_states['test_correct'], list(history.get_unique_states(hass=self.hass,
-                                                                          entity_id='test_correct.unique_states',
-                                                                          api_url='states',
-                                                                          api_password='qwerty')))
+            unique_states['test_correct'], history.get_unique_states(hass=self.hass,
+                                                                     entity_id='test_correct.unique_states',
+                                                                     api_url='states',
+                                                                     api_password='qwerty'))
         self.assertEqual(
-            unique_states, list(history.get_unique_states(hass=self.hass,
-                                                          entity_id=None,
-                                                          api_url='states',
-                                                          api_password='qwerty')))
+            unique_states, history.get_unique_states(hass=self.hass,
+                                                     entity_id=None,
+                                                     api_url='states',
+                                                     api_password='qwerty'))
