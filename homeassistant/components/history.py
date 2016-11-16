@@ -17,7 +17,6 @@ from homeassistant.components import recorder, script
 from homeassistant.components.frontend import register_built_in_panel
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.const import ATTR_HIDDEN
-from homeassistant import hass
 import requests
 
 DOMAIN = 'history'
