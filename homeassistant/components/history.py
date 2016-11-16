@@ -323,7 +323,7 @@ def get_unique_states(entity_id, api_url='state', api_password=''):
     """Return the last 5 states for entity_id."""
     html = requests.get('http://home.gelb.fish:8123/api/{}/{}'.format(api_url, entity_id),
     headers={'X-HA-access': api_password})
-    entity_state = ha.State(dict(html.json()))
+    entity_state = ha.State(entity_id)
     entity_domain = entity_state.domain
     states = recorder.get_model('States')
     recorder_result = recorder.execute(
