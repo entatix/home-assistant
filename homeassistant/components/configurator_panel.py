@@ -15,6 +15,7 @@ from homeassistant.components.history import get_unique_states
 import requests
 
 DOMAIN = 'config_panel'
+DEPENDENCIES = ['recorder', 'http']
 
 CONF_EXCLUDE = 'exclude'
 CONF_INCLUDE = 'include'
