@@ -43,16 +43,6 @@ IGNORE_DOMAINS = ('zone', 'scene',)
 
 def setup(hass, config):
     """Setup the panel hooks."""
-    filters = Filters()
-    exclude = config[DOMAIN].get(CONF_EXCLUDE)
-    if exclude:
-        filters.excluded_entities = exclude[CONF_ENTITIES]
-        filters.excluded_domains = exclude[CONF_DOMAINS]
-    include = config[DOMAIN].get(CONF_INCLUDE)
-    if include:
-        filters.included_entities = include[CONF_ENTITIES]
-        filters.included_domains = include[CONF_DOMAINS]
-
     hass.http.register_view(UniqueStatesView(hass))
 
 
