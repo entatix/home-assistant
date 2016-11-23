@@ -14,8 +14,7 @@ from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.history import get_unique_states
 import requests
 
-DOMAIN = 'history'
-DEPENDENCIES = ['recorder', 'http']
+DOMAIN = 'config_panel'
 
 CONF_EXCLUDE = 'exclude'
 CONF_INCLUDE = 'include'
