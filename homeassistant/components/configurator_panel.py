@@ -2,12 +2,19 @@ import asyncio
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.history import get_unique_states
 import requests
+import logging
+from homeassistant.helpers.entity_component import EntityComponent
 
+DEPENDENCIES = ['http', 'history']
+DOMAIN = 'frontend'
 
 def setup(hass, config):
     """Setup the panel hooks."""
-    hass.http.register_view(UniqueStatesView(hass))
+    component = EntityComponent(
+        logging.getLogger(__name__), DOMAIN, hass)
 
+    hass.http.register_view(UniqueStatesView(hass))
+    yield from component.async_setup(config)
     return True
 
 
