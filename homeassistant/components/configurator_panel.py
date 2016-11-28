@@ -39,7 +39,7 @@ def get_known_states(hass, entity_id=None, api_url='state', api_password=''):
 class UniqueStatesView(HomeAssistantView):
     """Handle unique states view requests."""
 
-    url = '/api/config-panel'
+    url = '/api/config-panel/{entity_id}'
     name = 'api:config-panel'
 
     def __init__(self, hass):
