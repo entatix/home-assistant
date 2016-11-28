@@ -14,6 +14,7 @@ def setup(hass, config):
         logging.getLogger(__name__), DOMAIN, hass)
 
     hass.http.register_view(UniqueStatesView(hass))
+    yield from component.async_setup(config)
     return True
 
 
@@ -39,7 +40,7 @@ def get_known_states(hass, entity_id=None, api_url='state', api_password=''):
 class UniqueStatesView(HomeAssistantView):
     """Handle unique states view requests."""
 
-    url = '/api/config-panel'
+    url = '/api/config-panel/{entity_id}'
     name = 'api:config-panel'
 
     def __init__(self, hass):
@@ -54,12 +55,6 @@ class UniqueStatesView(HomeAssistantView):
     @asyncio.coroutine
     def get(self, request, entity_id):
         """Retrieve unique states of entity."""
-        """result = self.hass.loop.run_in_executor(
+        result = yield from self.hass.loop.run_in_executor(
             None, self.wrapper_func, entity_id)
-        #return self.json(result)
-        return self.json({'stuff': 'things'})"""
-        state = request.app['hass'].states.get(entity_id)
-        if state:
-            return self.json(state)
-        else:
-            return self.json_message('Entity not found')
+        return self.json(result)
