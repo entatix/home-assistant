@@ -54,7 +54,12 @@ class UniqueStatesView(HomeAssistantView):
     @asyncio.coroutine
     def get(self, request, entity_id):
         """Retrieve unique states of entity."""
-        result = self.hass.loop.run_in_executor(
+        """result = self.hass.loop.run_in_executor(
             None, self.wrapper_func, entity_id)
         #return self.json(result)
-        return self.json({'stuff': 'things'})
+        return self.json({'stuff': 'things'})"""
+        state = request.app['hass'].states.get(entity_id)
+        if state:
+            return self.json(state)
+        else:
+            return self.json_message('Entity not found')
