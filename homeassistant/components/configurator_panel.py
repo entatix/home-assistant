@@ -57,4 +57,5 @@ class UniqueStatesView(HomeAssistantView):
         """Retrieve unique states of entity."""
         result = yield from self.hass.loop.run_in_executor(
             None, self.wrapper_func, entity_id)
-        return self.json(result)
+        #return self.json(result)
+        return self.json({'stuff': 'things'})
