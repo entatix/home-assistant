@@ -40,7 +40,7 @@ def get_known_states(hass, entity_id=None, api_url='state', api_password=''):
 class UniqueStatesView(HomeAssistantView):
     """Handle unique states view requests."""
 
-    url = '/api/config-panel/{entity_id}'
+    url = '/api/config-panel'
     name = 'api:config-panel'
 
     def __init__(self, hass):
@@ -57,4 +57,5 @@ class UniqueStatesView(HomeAssistantView):
         """Retrieve unique states of entity."""
         result = yield from self.hass.loop.run_in_executor(
             None, self.wrapper_func, entity_id)
-        return self.json(result)
+        #return self.json(result)
+        return self.json({'stuff': 'things'})
