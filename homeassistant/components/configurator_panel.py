@@ -14,7 +14,6 @@ def setup(hass, config):
         logging.getLogger(__name__), DOMAIN, hass)
 
     hass.http.register_view(UniqueStatesView(hass))
-    yield from component.async_setup(config)
     return True
 
 
